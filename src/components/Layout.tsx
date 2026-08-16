@@ -4,9 +4,6 @@ const links = [
   { to: '/', label: 'HOME', end: true },
   { to: '/journey', label: 'JOURNEY' },
   { to: '/market', label: 'CAREER MARKET' },
-  { to: '/compare', label: 'SAME PLACE, 4 VIEWS' },
-  { to: '/news', label: 'CAREER NEWS' },
-  { to: '/portfolio', label: 'FINAL PORTFOLIO' },
 ]
 
 export default function Layout() {
