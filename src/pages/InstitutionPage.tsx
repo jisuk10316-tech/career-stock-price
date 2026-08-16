@@ -44,16 +44,7 @@ export default function InstitutionPage() {
       <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-brand)]">
         {country.flag} {institution.tagline}
       </p>
-      <h1 className="mb-6 text-2xl font-black sm:text-3xl">{institution.name}</h1>
-
-      <div className="mb-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-        <p className="mb-1 text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
-          Experience
-        </p>
-        <p className="text-sm leading-relaxed text-[var(--color-ink)] sm:text-base">
-          {institution.experience}
-        </p>
-      </div>
+      <h1 className="mb-10 text-2xl font-black sm:text-3xl">{institution.name}</h1>
 
       <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-[var(--color-muted)]">
         팀원별 Career Stock 변화

@@ -13,7 +13,6 @@ export interface Institution {
   name: string
   nameKo: string
   tagline: string
-  experience: string
 }
 
 export interface Country {

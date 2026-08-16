@@ -43,10 +43,9 @@ export default function CountryPage() {
               <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-brand)]">
                 {inst.tagline}
               </p>
-              <h2 className="mb-2 text-lg font-bold text-[var(--color-ink)] group-hover:text-[var(--color-brand)]">
+              <h2 className="mb-4 text-lg font-bold text-[var(--color-ink)] group-hover:text-[var(--color-brand)]">
                 {inst.name}
               </h2>
-              <p className="mb-4 text-sm text-[var(--color-muted)]">{inst.experience}</p>
               {biggest && (
                 <div className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-sm">
                   <span className="text-[var(--color-muted)]">
