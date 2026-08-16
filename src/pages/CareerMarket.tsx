@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { members } from '../data/members'
+import { memberById, members } from '../data/members'
 import { institutions, institutionsByCountry } from '../data/institutions'
 import { countries } from '../data/countries'
 import {
@@ -67,6 +67,11 @@ export default function CareerMarket() {
   const timeline = [...series].sort((a, b) => b.at - a.at)
 
   if (!active) {
+    const recent = members
+      .flatMap((m) => loadEntries(m.id).map((entry) => ({ memberId: m.id, entry })))
+      .sort((a, b) => b.entry.at - a.entry.at)
+      .slice(0, 8)
+
     return (
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <p className="mb-2 font-mono text-xs tracking-widest text-[var(--color-brand)]">
@@ -114,6 +119,47 @@ export default function CareerMarket() {
             )
           })}
         </div>
+
+        <h2 className="mb-4 mt-12 text-sm font-bold uppercase tracking-wide text-[var(--color-muted)]">
+          최근 기록
+        </h2>
+        {recent.length === 0 ? (
+          <p className="text-sm text-[var(--color-muted)]">
+            아직 기록된 경험이 없습니다. 위 탭에서 첫 기록을 남겨보세요.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {recent.map(({ memberId, entry }) => {
+              const member = memberById[memberId]
+              return (
+                <Link
+                  key={entry.id}
+                  to={`/market/${memberId}`}
+                  className="block rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-brand)]"
+                >
+                  <div className="mb-1 flex items-center justify-between gap-3">
+                    <span className="flex items-center gap-2 text-sm font-semibold text-[var(--color-ink)]">
+                      <span
+                        className="h-2 w-2 rounded-full"
+                        style={{ backgroundColor: member.color }}
+                      />
+                      {member.name}
+                      <span className="font-normal text-[var(--color-muted)]">
+                        · {entry.place}
+                      </span>
+                    </span>
+                    <Delta value={entry.delta} size="sm" />
+                  </div>
+                  {entry.why && (
+                    <p className="line-clamp-2 text-sm leading-relaxed text-[var(--color-muted)]">
+                      {entry.why}
+                    </p>
+                  )}
+                </Link>
+              )
+            })}
+          </div>
+        )}
       </div>
     )
   }
