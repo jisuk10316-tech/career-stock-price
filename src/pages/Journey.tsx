@@ -5,6 +5,9 @@ import { institutionsByCountry } from '../data/institutions'
 export default function Journey() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+      <Link to="/" className="mb-6 inline-block text-xs text-[var(--color-muted)] hover:text-[var(--color-brand)]">
+        ← HOME으로
+      </Link>
       <p className="mb-2 font-mono text-xs tracking-widest text-[var(--color-brand)]">JOURNEY</p>
       <h1 className="mb-2 text-2xl font-black sm:text-3xl">이동 경로를 따라가며 진로를 확인하세요</h1>
       <p className="mb-10 text-sm text-[var(--color-muted)]">

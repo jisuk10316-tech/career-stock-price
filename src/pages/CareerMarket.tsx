@@ -73,7 +73,10 @@ export default function CareerMarket() {
       .slice(0, 8)
 
     return (
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+        <Link to="/" className="mb-6 inline-block text-xs text-[var(--color-muted)] hover:text-[var(--color-brand)]">
+          ← HOME으로
+        </Link>
         <p className="mb-2 font-mono text-xs tracking-widest text-[var(--color-brand)]">
           CAREER MARKET
         </p>
@@ -128,7 +131,7 @@ export default function CareerMarket() {
             아직 기록된 경험이 없습니다. 위 탭에서 첫 기록을 남겨보세요.
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             {recent.map(({ memberId, entry }) => {
               const member = memberById[memberId]
               return (
@@ -165,7 +168,10 @@ export default function CareerMarket() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+      <Link to="/" className="mb-6 inline-block text-xs text-[var(--color-muted)] hover:text-[var(--color-brand)]">
+        ← HOME으로
+      </Link>
       <p className="mb-2 font-mono text-xs tracking-widest text-[var(--color-brand)]">
         CAREER MARKET
       </p>
@@ -204,141 +210,147 @@ export default function CareerMarket() {
         </div>
       </div>
 
-      <div className="mb-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-6">
-        <JournalChart series={series} height={320} color={active.color} />
-      </div>
-
-      <div className="mb-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6">
-        <h3 className="mb-1 text-base font-bold text-[var(--color-ink)]">
-          Today&apos;s Career Check
-        </h3>
-        <p className="mb-5 text-sm text-[var(--color-muted)]">
-          새로운 산업 · 직무 · 연구환경을 경험했다면 지금 기록하세요.
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label htmlFor="place" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
-              오늘 경험한 곳
-            </label>
-            <div className="relative">
-              <select
-                id="place"
-                value={placeOption}
-                onChange={(e) => setPlaceOption(e.target.value)}
-                className="w-full appearance-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 pr-9 text-sm text-[var(--color-ink)] focus:border-[var(--color-brand)] focus:outline-none"
-              >
-                <option value="" disabled>
-                  장소를 선택하세요
-                </option>
-                {countries.map((c) => (
-                  <optgroup key={c.id} label={`${c.flag} ${c.nameKo}`}>
-                    {institutionsByCountry(c.id).map((i) => (
-                      <option key={i.id} value={i.id}>
-                        {i.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-                <option value="custom">✏️ 직접 입력</option>
-              </select>
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]">
-                ▾
-              </span>
-            </div>
-            {placeOption === 'custom' && (
-              <input
-                autoFocus
-                value={customPlace}
-                onChange={(e) => setCustomPlace(e.target.value)}
-                placeholder="예: Google Amsterdam Office"
-                className="mt-2 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-brand)] focus:outline-none"
-              />
-            )}
+      <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
+        <div>
+          <div className="mb-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-6">
+            <JournalChart series={series} height={320} color={active.color} />
           </div>
 
-          <div>
-            <div className="mb-1.5 flex items-center justify-between">
-              <label htmlFor="delta" className="text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
-                관심도가 얼마나 변했나요? (10 단위)
-              </label>
-              <Delta value={delta} size="md" />
-            </div>
-            <input
-              id="delta"
-              type="range"
-              min={DELTA_MIN}
-              max={DELTA_MAX}
-              step={DELTA_STEP}
-              value={delta}
-              onChange={(e) => setDelta(clampDelta(Number(e.target.value)))}
-              style={{ accentColor: active.color }}
-              className="w-full"
-            />
-            <div className="mt-1 flex justify-between text-[10px] tabular text-[var(--color-muted)]">
-              <span>{DELTA_MIN}</span>
-              <span>0</span>
-              <span>+{DELTA_MAX}</span>
-            </div>
-          </div>
+          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6">
+            <h3 className="mb-1 text-base font-bold text-[var(--color-ink)]">
+              Today&apos;s Career Check
+            </h3>
+            <p className="mb-5 text-sm text-[var(--color-muted)]">
+              새로운 산업 · 직무 · 연구환경을 경험했다면 지금 기록하세요.
+            </p>
 
-          <div>
-            <label htmlFor="why" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
-              왜 변했나요?
-            </label>
-            <textarea
-              id="why"
-              value={why}
-              onChange={(e) => setWhy(e.target.value)}
-              rows={3}
-              placeholder="어떤 경험이 관심도를 움직였는지 적어보세요."
-              className="w-full resize-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-brand)] focus:outline-none"
-            />
-          </div>
-
-          <button
-            type="submit"
-            style={{ backgroundColor: active.color }}
-            className="w-full rounded-lg py-2.5 text-sm font-bold text-[color:var(--color-on-brand)] transition-transform hover:scale-[1.01]"
-          >
-            기록 저장
-          </button>
-        </form>
-      </div>
-
-      <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-[var(--color-muted)]">
-        Career Timeline
-      </h3>
-      <div className="space-y-3">
-        {timeline.length === 0 && (
-          <p className="text-sm text-[var(--color-muted)]">아직 기록된 경험이 없습니다.</p>
-        )}
-        {timeline.map((point) => (
-          <div
-            key={point.id}
-            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
-          >
-            <div className="mb-1 flex items-start justify-between gap-3">
-              <span className="text-sm font-semibold text-[var(--color-ink)]">{point.place}</span>
-              <div className="flex items-center gap-2">
-                <Delta value={point.delta} size="sm" />
-                <span className="text-xs tabular text-[var(--color-muted)]">→ {point.price}</span>
-                {point.id.startsWith('entry-') && (
-                  <button
-                    onClick={() => handleDelete(point.id)}
-                    aria-label="기록 삭제"
-                    className="text-[var(--color-muted)] transition-colors hover:text-[var(--color-down)]"
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label htmlFor="place" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
+                  오늘 경험한 곳
+                </label>
+                <div className="relative">
+                  <select
+                    id="place"
+                    value={placeOption}
+                    onChange={(e) => setPlaceOption(e.target.value)}
+                    className="w-full appearance-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 pr-9 text-sm text-[var(--color-ink)] focus:border-[var(--color-brand)] focus:outline-none"
                   >
-                    ✕
-                  </button>
+                    <option value="" disabled>
+                      장소를 선택하세요
+                    </option>
+                    {countries.map((c) => (
+                      <optgroup key={c.id} label={`${c.flag} ${c.nameKo}`}>
+                        {institutionsByCountry(c.id).map((i) => (
+                          <option key={i.id} value={i.id}>
+                            {i.name}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
+                    <option value="custom">✏️ 직접 입력</option>
+                  </select>
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]">
+                    ▾
+                  </span>
+                </div>
+                {placeOption === 'custom' && (
+                  <input
+                    autoFocus
+                    value={customPlace}
+                    onChange={(e) => setCustomPlace(e.target.value)}
+                    placeholder="예: Google Amsterdam Office"
+                    className="mt-2 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-brand)] focus:outline-none"
+                  />
                 )}
               </div>
-            </div>
-            {point.why && (
-              <p className="text-sm leading-relaxed text-[var(--color-muted)]">{point.why}</p>
-            )}
+
+              <div>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <label htmlFor="delta" className="text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
+                    관심도가 얼마나 변했나요? (10 단위)
+                  </label>
+                  <Delta value={delta} size="md" />
+                </div>
+                <input
+                  id="delta"
+                  type="range"
+                  min={DELTA_MIN}
+                  max={DELTA_MAX}
+                  step={DELTA_STEP}
+                  value={delta}
+                  onChange={(e) => setDelta(clampDelta(Number(e.target.value)))}
+                  style={{ accentColor: active.color }}
+                  className="w-full"
+                />
+                <div className="mt-1 flex justify-between text-[10px] tabular text-[var(--color-muted)]">
+                  <span>{DELTA_MIN}</span>
+                  <span>0</span>
+                  <span>+{DELTA_MAX}</span>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="why" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
+                  왜 변했나요?
+                </label>
+                <textarea
+                  id="why"
+                  value={why}
+                  onChange={(e) => setWhy(e.target.value)}
+                  rows={3}
+                  placeholder="어떤 경험이 관심도를 움직였는지 적어보세요."
+                  className="w-full resize-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-brand)] focus:outline-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{ backgroundColor: active.color }}
+                className="w-full rounded-lg py-2.5 text-sm font-bold text-[color:var(--color-on-brand)] transition-transform hover:scale-[1.01]"
+              >
+                기록 저장
+              </button>
+            </form>
           </div>
-        ))}
+        </div>
+
+        <div>
+          <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-[var(--color-muted)]">
+            Career Timeline
+          </h3>
+          <div className="space-y-3">
+            {timeline.length === 0 && (
+              <p className="text-sm text-[var(--color-muted)]">아직 기록된 경험이 없습니다.</p>
+            )}
+            {timeline.map((point) => (
+              <div
+                key={point.id}
+                className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              >
+                <div className="mb-1 flex items-start justify-between gap-3">
+                  <span className="text-sm font-semibold text-[var(--color-ink)]">{point.place}</span>
+                  <div className="flex items-center gap-2">
+                    <Delta value={point.delta} size="sm" />
+                    {point.id.startsWith('entry-') && (
+                      <button
+                        onClick={() => handleDelete(point.id)}
+                        aria-label="기록 삭제"
+                        className="text-[var(--color-muted)] transition-colors hover:text-[var(--color-down)]"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <p className="mb-1 text-xs tabular text-[var(--color-muted)]">→ {point.price}</p>
+                {point.why && (
+                  <p className="text-sm leading-relaxed text-[var(--color-muted)]">{point.why}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
