@@ -7,7 +7,7 @@ export const DELTA_STEP = 10
 export const DELTA_MIN = -50
 export const DELTA_MAX = 50
 
-const storageKey = (memberId: MemberId) => `career-stock:v1:${memberId}`
+const storageKey = (memberId: MemberId) => `career-stock:v2:${memberId}`
 
 function readRaw(memberId: MemberId): JournalEntry[] | null {
   if (typeof window === 'undefined') return null
