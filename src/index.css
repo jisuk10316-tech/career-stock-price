@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --color-bg: #0a0d13;
+  --color-surface: #10141d;
+  --color-surface-2: #161b27;
+  --color-border: #232a3a;
+  --color-ink: #eef1f7;
+  --color-muted: #8892a6;
+  --color-brand: #f0b429;
+  --color-brand-dim: #a97e22;
+  --color-up: #ef4444;
+  --color-up-dim: #7f1d1d;
+  --color-down: #3b82f6;
+  --color-down-dim: #1e3a5f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--color-brand);
+  color: #10141d;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.ticker-tape {
+  mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.ticker-scroll {
+  animation: ticker-scroll 40s linear infinite;
+}
