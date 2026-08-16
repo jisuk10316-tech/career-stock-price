@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { members } from '../data/members'
 import { institutions, institutionsByCountry } from '../data/institutions'
 import { countries } from '../data/countries'
@@ -21,13 +21,15 @@ import type { JournalEntry } from '../data/types'
 export default function CareerMarket() {
   const { memberId } = useParams()
   const navigate = useNavigate()
-  const active = members.find((m) => m.id === memberId) ?? members[0]
+  const active = members.find((m) => m.id === memberId)
 
-  const [entries, setEntries] = useState<JournalEntry[]>(() => loadEntries(active.id))
+  const [entries, setEntries] = useState<JournalEntry[]>(() =>
+    active ? loadEntries(active.id) : []
+  )
 
   useEffect(() => {
-    setEntries(loadEntries(active.id))
-  }, [active.id])
+    if (active) setEntries(loadEntries(active.id))
+  }, [active])
 
   const [placeOption, setPlaceOption] = useState('') // '' | 'custom' | institution id
   const [customPlace, setCustomPlace] = useState('')
@@ -43,7 +45,7 @@ export default function CareerMarket() {
 
   const handleSubmit = (ev: React.FormEvent) => {
     ev.preventDefault()
-    if (!place.trim() || !why.trim()) return
+    if (!active || !place.trim() || !why.trim()) return
     const next = addEntry(active.id, {
       place: place.trim(),
       delta,
@@ -58,10 +60,39 @@ export default function CareerMarket() {
   }
 
   const handleDelete = (id: string) => {
+    if (!active) return
     setEntries(removeEntry(active.id, id))
   }
 
   const timeline = [...series].sort((a, b) => b.at - a.at)
+
+  if (!active) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+        <p className="mb-2 font-mono text-xs tracking-widest text-[var(--color-brand)]">
+          CAREER MARKET
+        </p>
+        <h1 className="mb-6 text-2xl font-black sm:text-3xl">MY CAREER STOCK</h1>
+
+        <div className="mb-8 flex flex-wrap gap-2 border-b border-[var(--color-border)] pb-4">
+          {members.map((m) => (
+            <Link
+              key={m.id}
+              to={`/market/${m.id}`}
+              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-bold text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)]"
+              style={{ borderColor: m.color }}
+            >
+              {m.name}
+            </Link>
+          ))}
+        </div>
+
+        <p className="text-sm text-[var(--color-muted)]">
+          누구의 Career Stock을 볼까요? 위 탭을 눌러 선택하세요.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
