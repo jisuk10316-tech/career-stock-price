@@ -77,9 +77,10 @@ export default function CareerMarket() {
             <button
               key={m.id}
               onClick={() => navigate(`/market/${m.id}`)}
+              style={isActive ? { backgroundColor: m.color } : undefined}
               className={`rounded-full px-4 py-2 text-sm font-bold transition-colors ${
                 isActive
-                  ? 'bg-[var(--color-brand)] text-[#10141d]'
+                  ? 'text-[color:var(--color-on-brand)]'
                   : 'border border-[var(--color-border)] text-[var(--color-muted)] hover:text-[var(--color-ink)]'
               }`}
             >
@@ -95,7 +96,7 @@ export default function CareerMarket() {
           <p className="text-sm text-[var(--color-muted)]">{active.role}</p>
         </div>
         <div className="flex items-baseline gap-3">
-          <span className="text-3xl font-black tabular text-[var(--color-ink)]">
+          <span className="text-3xl font-black tabular" style={{ color: active.color }}>
             {currentPrice}
           </span>
           <Delta value={totalChange} size="md" />
@@ -103,7 +104,7 @@ export default function CareerMarket() {
       </div>
 
       <div className="mb-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-6">
-        <JournalChart series={series} height={320} />
+        <JournalChart series={series} height={320} color={active.color} />
       </div>
 
       <div className="mb-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6">
@@ -170,7 +171,8 @@ export default function CareerMarket() {
               step={DELTA_STEP}
               value={delta}
               onChange={(e) => setDelta(clampDelta(Number(e.target.value)))}
-              className="w-full accent-[var(--color-brand)]"
+              style={{ accentColor: active.color }}
+              className="w-full"
             />
             <div className="mt-1 flex justify-between text-[10px] tabular text-[var(--color-muted)]">
               <span>{DELTA_MIN}</span>
@@ -195,7 +197,8 @@ export default function CareerMarket() {
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-[var(--color-brand)] py-2.5 text-sm font-bold text-[#10141d] transition-transform hover:scale-[1.01]"
+            style={{ backgroundColor: active.color }}
+            className="w-full rounded-lg py-2.5 text-sm font-bold text-[color:var(--color-on-brand)] transition-transform hover:scale-[1.01]"
           >
             기록 저장
           </button>

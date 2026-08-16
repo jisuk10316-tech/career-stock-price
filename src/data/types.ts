@@ -5,6 +5,8 @@ export interface Member {
   id: MemberId
   name: string
   role: string
+  /** Identity accent color, matching this member's tag color in the printed diary. */
+  color: string
 }
 
 export interface Institution {

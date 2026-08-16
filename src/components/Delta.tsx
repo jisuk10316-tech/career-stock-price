@@ -14,7 +14,7 @@ export default function Delta({ value, size = 'md', showSign = true }: DeltaProp
   const isUp = value > 0
   const isFlat = value === 0
   const color = isFlat
-    ? 'text-[var(--color-muted)] bg-white/5'
+    ? 'text-[var(--color-muted)] bg-black/5'
     : isUp
       ? 'text-[var(--color-up)] bg-[var(--color-up)]/10'
       : 'text-[var(--color-down)] bg-[var(--color-down)]/10'

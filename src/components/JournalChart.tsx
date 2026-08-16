@@ -14,6 +14,8 @@ import { START_PRICE } from '../data/journal-store'
 interface JournalChartProps {
   series: SeriesPoint[]
   height?: number
+  /** Accent color, e.g. a member's identity color. Defaults to the brand color. */
+  color?: string
 }
 
 function CustomTooltip({ active, payload }: any) {
@@ -38,12 +40,14 @@ function CustomTooltip({ active, payload }: any) {
 }
 
 function EndDot(props: any) {
-  const { cx, cy, index, dataLength } = props
+  const { cx, cy, index, dataLength, accent } = props
   if (index !== dataLength - 1) return null
-  return <circle cx={cx} cy={cy} r={5} fill="var(--color-brand)" stroke="#10141d" strokeWidth={2} />
+  return <circle cx={cx} cy={cy} r={5} fill={accent} stroke="var(--color-surface)" strokeWidth={2} />
 }
 
-export default function JournalChart({ series, height = 320 }: JournalChartProps) {
+export default function JournalChart({ series, height = 320, color }: JournalChartProps) {
+  const accent = color ?? 'var(--color-brand)'
+  const gradientId = `journalFill-${accent.replace(/[^a-zA-Z0-9]/g, '')}`
   const data = [
     { place: '출국', price: START_PRICE, delta: 0, why: undefined },
     ...series,
@@ -53,9 +57,9 @@ export default function JournalChart({ series, height = 320 }: JournalChartProps
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data} margin={{ top: 8, right: 16, left: -12, bottom: 8 }}>
         <defs>
-          <linearGradient id="journalFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--color-brand)" stopOpacity={0.35} />
-            <stop offset="100%" stopColor="var(--color-brand)" stopOpacity={0} />
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={accent} stopOpacity={0.35} />
+            <stop offset="100%" stopColor={accent} stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid stroke="var(--color-border)" strokeDasharray="3 3" vertical={false} />
@@ -78,14 +82,14 @@ export default function JournalChart({ series, height = 320 }: JournalChartProps
         <Area
           type="monotone"
           dataKey="price"
-          stroke="var(--color-brand)"
+          stroke={accent}
           strokeWidth={3}
-          fill="url(#journalFill)"
+          fill={`url(#${gradientId})`}
           isAnimationActive={false}
           dot={(props: any) => (
-            <EndDot key={props.index} {...props} dataLength={data.length} />
+            <EndDot key={props.index} {...props} dataLength={data.length} accent={accent} />
           )}
-          activeDot={{ r: 6, fill: 'var(--color-brand)', stroke: '#10141d', strokeWidth: 2 }}
+          activeDot={{ r: 6, fill: accent, stroke: 'var(--color-surface)', strokeWidth: 2 }}
         />
       </AreaChart>
     </ResponsiveContainer>

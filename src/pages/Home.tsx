@@ -24,13 +24,13 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
             <Link
               to="/journey"
-              className="rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-[#10141d] transition-transform hover:scale-105"
+              className="rounded-full bg-[var(--color-brand)] px-5 py-2.5 text-sm font-bold text-[color:var(--color-on-brand)] transition-transform hover:scale-105"
             >
               여정 시작하기 →
             </Link>
             <Link
               to="/market"
-              className="rounded-full border border-[var(--color-border)] px-5 py-2.5 text-sm font-bold text-[var(--color-ink)] transition-colors hover:bg-white/5"
+              className="rounded-full border border-[var(--color-border)] px-5 py-2.5 text-sm font-bold text-[var(--color-ink)] transition-colors hover:bg-black/5"
             >
               CAREER MARKET 보기
             </Link>
@@ -79,14 +79,20 @@ export default function Home() {
                   className="group rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition-colors hover:border-[var(--color-brand)]"
                 >
                   <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-base font-bold text-[var(--color-ink)] group-hover:text-[var(--color-brand)]">
-                        {m.name}
-                      </h3>
-                      <p className="text-xs text-[var(--color-muted)]">{m.role}</p>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: m.color }}
+                      />
+                      <div>
+                        <h3 className="text-base font-bold text-[var(--color-ink)] group-hover:text-[var(--color-brand)]">
+                          {m.name}
+                        </h3>
+                        <p className="text-xs text-[var(--color-muted)]">{m.role}</p>
+                      </div>
                     </div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-black tabular text-[var(--color-ink)]">
+                      <span className="text-2xl font-black tabular" style={{ color: m.color }}>
                         {current}
                       </span>
                       <Delta value={change} size="sm" />

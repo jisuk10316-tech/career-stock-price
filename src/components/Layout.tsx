@@ -12,7 +12,7 @@ export default function Layout() {
       <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-bg)]/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <NavLink to="/" className="flex items-center gap-2 shrink-0">
-            <span className="flex h-7 w-7 items-center justify-center rounded bg-[var(--color-brand)] text-sm font-black text-[#10141d]">
+            <span className="flex h-7 w-7 items-center justify-center rounded bg-[var(--color-brand)] text-sm font-black text-[color:var(--color-on-brand)]">
               ₩
             </span>
             <span className="font-mono text-sm font-bold tracking-tight text-[var(--color-ink)] sm:text-base">
@@ -28,8 +28,8 @@ export default function Layout() {
                 className={({ isActive }) =>
                   `shrink-0 rounded-full px-3 py-1.5 transition-colors ${
                     isActive
-                      ? 'bg-[var(--color-brand)] text-[#10141d]'
-                      : 'text-[var(--color-muted)] hover:bg-white/5 hover:text-[var(--color-ink)]'
+                      ? 'bg-[var(--color-brand)] text-[color:var(--color-on-brand)]'
+                      : 'text-[var(--color-muted)] hover:bg-black/5 hover:text-[var(--color-ink)]'
                   }`
                 }
               >
