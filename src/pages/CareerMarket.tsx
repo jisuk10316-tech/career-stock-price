@@ -1,33 +1,69 @@
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { members } from '../data/members'
-import { events } from '../data/events'
-import { institutionOrder, institutionById } from '../data/institutions'
-import { countries } from '../data/countries'
-import { getMemberChartData, getMemberTotalChange } from '../data/prices'
-import StockChart, { STOCK_PALETTE } from '../components/StockChart'
+import { institutions } from '../data/institutions'
+import {
+  addEntry,
+  clampDelta,
+  computeSeries,
+  DELTA_MAX,
+  DELTA_MIN,
+  DELTA_STEP,
+  loadEntries,
+  removeEntry,
+  START_PRICE,
+} from '../data/journal-store'
+import JournalChart from '../components/JournalChart'
 import Delta from '../components/Delta'
+import type { JournalEntry } from '../data/types'
 
 export default function CareerMarket() {
   const { memberId } = useParams()
   const navigate = useNavigate()
   const active = members.find((m) => m.id === memberId) ?? members[0]
 
-  const chartData = getMemberChartData(active.id)
-  const totals = getMemberTotalChange(active.id)
+  const [entries, setEntries] = useState<JournalEntry[]>(() => loadEntries(active.id))
 
-  const timeline = institutionOrder
-    .map((instId) => ({
-      institution: institutionById[instId],
-      events: events.filter((e) => e.institutionId === instId && e.memberId === active.id),
-    }))
-    .filter((row) => row.events.length > 0)
+  useEffect(() => {
+    setEntries(loadEntries(active.id))
+  }, [active.id])
+
+  const [place, setPlace] = useState('')
+  const [delta, setDelta] = useState(0)
+  const [why, setWhy] = useState('')
+
+  const series = useMemo(() => computeSeries(entries), [entries])
+  const currentPrice = series.length ? series[series.length - 1].price : START_PRICE
+  const totalChange = currentPrice - START_PRICE
+
+  const handleSubmit = (ev: React.FormEvent) => {
+    ev.preventDefault()
+    if (!place.trim() || !why.trim()) return
+    const matchedInstitution = institutions.find((i) => i.name === place || i.nameKo === place)
+    const next = addEntry(active.id, {
+      place: place.trim(),
+      delta,
+      why: why.trim(),
+      institutionId: matchedInstitution?.id,
+    })
+    setEntries(next)
+    setPlace('')
+    setDelta(0)
+    setWhy('')
+  }
+
+  const handleDelete = (id: string) => {
+    setEntries(removeEntry(active.id, id))
+  }
+
+  const timeline = [...series].sort((a, b) => b.at - a.at)
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
       <p className="mb-2 font-mono text-xs tracking-widest text-[var(--color-brand)]">
         CAREER MARKET
       </p>
-      <h1 className="mb-6 text-2xl font-black sm:text-3xl">MY CAREER MARKET</h1>
+      <h1 className="mb-6 text-2xl font-black sm:text-3xl">MY CAREER STOCK</h1>
 
       <div className="mb-8 flex flex-wrap gap-2 border-b border-[var(--color-border)] pb-4">
         {members.map((m) => {
@@ -48,83 +84,131 @@ export default function CareerMarket() {
         })}
       </div>
 
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-xl font-bold text-[var(--color-ink)]">{active.name}</h2>
           <p className="text-sm text-[var(--color-muted)]">{active.role}</p>
         </div>
+        <div className="flex items-baseline gap-3">
+          <span className="text-3xl font-black tabular text-[var(--color-ink)]">
+            {currentPrice}
+          </span>
+          <Delta value={totalChange} size="md" />
+        </div>
       </div>
 
-      <div className="mb-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-6">
-        <StockChart
-          data={chartData}
-          series={active.stocks.map((s) => ({ symbol: s.symbol, label: s.label }))}
-          height={360}
-        />
+      <div className="mb-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-6">
+        <JournalChart series={series} height={320} />
       </div>
 
-      <div className="mb-10 grid gap-3 sm:grid-cols-2">
-        {totals.map((t, i) => (
-          <div
-            key={t.symbol}
-            className="flex items-center justify-between rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3"
-          >
-            <div className="flex items-center gap-2">
-              <span
-                className="h-2.5 w-2.5 rounded-full"
-                style={{ backgroundColor: STOCK_PALETTE[i % STOCK_PALETTE.length] }}
-              />
-              <span className="text-sm font-medium text-[var(--color-ink)]">{t.label}</span>
+      <div className="mb-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6">
+        <h3 className="mb-1 text-base font-bold text-[var(--color-ink)]">
+          Today&apos;s Career Check
+        </h3>
+        <p className="mb-5 text-sm text-[var(--color-muted)]">
+          새로운 산업 · 직무 · 연구환경을 경험했다면 지금 기록하세요.
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="place" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
+              오늘 경험한 곳
+            </label>
+            <input
+              id="place"
+              list="institution-options"
+              value={place}
+              onChange={(e) => setPlace(e.target.value)}
+              placeholder="예: DHL Europe Innovation Center"
+              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-brand)] focus:outline-none"
+            />
+            <datalist id="institution-options">
+              {institutions.map((i) => (
+                <option key={i.id} value={i.name} />
+              ))}
+            </datalist>
+          </div>
+
+          <div>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label htmlFor="delta" className="text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
+                관심도가 얼마나 변했나요? (10 단위)
+              </label>
+              <Delta value={delta} size="md" />
             </div>
-            <div className="flex items-center gap-2 tabular">
-              <span className="text-sm text-[var(--color-muted)]">
-                {t.start} → {t.current}
-              </span>
-              <Delta value={t.change} size="sm" />
+            <input
+              id="delta"
+              type="range"
+              min={DELTA_MIN}
+              max={DELTA_MAX}
+              step={DELTA_STEP}
+              value={delta}
+              onChange={(e) => setDelta(clampDelta(Number(e.target.value)))}
+              className="w-full accent-[var(--color-brand)]"
+            />
+            <div className="mt-1 flex justify-between text-[10px] tabular text-[var(--color-muted)]">
+              <span>{DELTA_MIN}</span>
+              <span>0</span>
+              <span>+{DELTA_MAX}</span>
             </div>
           </div>
-        ))}
+
+          <div>
+            <label htmlFor="why" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
+              왜 변했나요?
+            </label>
+            <textarea
+              id="why"
+              value={why}
+              onChange={(e) => setWhy(e.target.value)}
+              rows={3}
+              placeholder="어떤 경험이 관심도를 움직였는지 적어보세요."
+              className="w-full resize-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-brand)] focus:outline-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-[var(--color-brand)] py-2.5 text-sm font-bold text-[#10141d] transition-transform hover:scale-[1.01]"
+          >
+            기록 저장
+          </button>
+        </form>
       </div>
 
       <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-[var(--color-muted)]">
         Career Timeline
       </h3>
-      <div className="space-y-4 border-l border-[var(--color-border)] pl-5">
-        {timeline.map(({ institution, events: evs }) => {
-          const country = countries.find((c) => c.id === institution.countryId)!
-          return (
-            <div key={institution.id} className="relative">
-              <span className="absolute -left-[26px] top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--color-brand)]" />
-              <p className="mb-1 text-xs text-[var(--color-muted)]">
-                {country.flag} {institution.name}
-              </p>
-              <div className="space-y-2">
-                {evs.map((e) => {
-                  const label = active.stocks.find((s) => s.symbol === e.symbol)?.label ?? e.symbol
-                  return (
-                    <div
-                      key={`${institution.id}-${e.symbol}`}
-                      className="rounded-lg bg-[var(--color-surface)] p-3"
-                    >
-                      <div className="mb-1 flex items-center justify-between">
-                        <span className="text-sm font-semibold text-[var(--color-ink)]">
-                          {label}
-                          {e.discovery && (
-                            <span className="ml-2 rounded-full bg-[var(--color-brand)]/15 px-2 py-0.5 text-[10px] font-bold text-[var(--color-brand)]">
-                              NEW STOCK
-                            </span>
-                          )}
-                        </span>
-                        <Delta value={e.delta} size="sm" />
-                      </div>
-                      <p className="text-sm leading-relaxed text-[var(--color-muted)]">{e.why}</p>
-                    </div>
-                  )
-                })}
+      <div className="space-y-3">
+        {timeline.length === 0 && (
+          <p className="text-sm text-[var(--color-muted)]">아직 기록된 경험이 없습니다.</p>
+        )}
+        {timeline.map((point) => (
+          <div
+            key={point.id}
+            className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+          >
+            <div className="mb-1 flex items-start justify-between gap-3">
+              <span className="text-sm font-semibold text-[var(--color-ink)]">{point.place}</span>
+              <div className="flex items-center gap-2">
+                <Delta value={point.delta} size="sm" />
+                <span className="text-xs tabular text-[var(--color-muted)]">→ {point.price}</span>
+                {point.id.startsWith('entry-') && (
+                  <button
+                    onClick={() => handleDelete(point.id)}
+                    aria-label="기록 삭제"
+                    className="text-[var(--color-muted)] transition-colors hover:text-[var(--color-down)]"
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
             </div>
-          )
-        })}
+            {point.why && (
+              <p className="text-sm leading-relaxed text-[var(--color-muted)]">{point.why}</p>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   )

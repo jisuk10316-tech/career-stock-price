@@ -3,26 +3,29 @@ import { Link } from 'react-router-dom'
 import { members, memberById } from '../data/members'
 import { countries } from '../data/countries'
 import { institutionsByCountry } from '../data/institutions'
-import { getBiggestMoveAtInstitution, stockLabel } from '../data/insights'
+import { getBiggestMoveAtInstitution } from '../data/insights'
+import { loadAllEntries } from '../data/journal-store'
 import { portfolio } from '../data/portfolio'
 import Delta from '../components/Delta'
+import type { MemberId } from '../data/types'
 
-function countryHeadline(countryId: string) {
+function countryHeadline(countryId: string, allEntries: ReturnType<typeof loadAllEntries>) {
   const insts = institutionsByCountry(countryId)
   const moves = insts
-    .map((i) => ({ inst: i, move: getBiggestMoveAtInstitution(i.id) }))
+    .map((i) => ({ inst: i, move: getBiggestMoveAtInstitution(i.id, allEntries) }))
     .filter((x) => x.move)
   if (!moves.length) return null
   const top = moves.reduce((a, b) =>
-    Math.abs(b.move!.delta) > Math.abs(a.move!.delta) ? b : a
+    Math.abs(b.move!.entry.delta) > Math.abs(a.move!.entry.delta) ? b : a
   )
   return { institution: top.inst, move: top.move! }
 }
 
 export default function Portfolio() {
-  const [active, setActive] = useState(members[0].id)
+  const [active, setActive] = useState<MemberId>(members[0].id)
   const activeMember = memberById[active]
   const narrative = portfolio[active]
+  const allEntries = loadAllEntries()
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
@@ -51,16 +54,16 @@ export default function Portfolio() {
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-4">
             {countries.map((c) => {
-              const headline = countryHeadline(c.id)
+              const headline = countryHeadline(c.id, allEntries)
               if (!headline) return null
               const { institution, move } = headline
               return (
                 <div key={c.id} className="rounded-xl bg-white/5 p-3 text-center">
                   <p className="mb-1 text-xs text-[var(--color-muted)]">{institution.nameKo}</p>
                   <p className="mb-1 text-xs font-semibold text-[var(--color-ink)]">
-                    {memberById[move.memberId].name} · {stockLabel(move.memberId, move.symbol)}
+                    {memberById[move.memberId].name}
                   </p>
-                  <Delta value={move.delta} size="sm" />
+                  <Delta value={move.entry.delta} size="sm" />
                 </div>
               )
             })}

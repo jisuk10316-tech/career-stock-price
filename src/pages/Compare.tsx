@@ -2,15 +2,17 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { institutions } from '../data/institutions'
 import { countries } from '../data/countries'
-import { getPrimaryEventsAtInstitution } from '../data/insights'
+import { getPrimaryEntriesAtInstitution } from '../data/insights'
+import { loadAllEntries } from '../data/journal-store'
 import Delta from '../components/Delta'
 
 export default function Compare() {
   const [selected, setSelected] = useState(institutions[4].id) // default: CERN
+  const allEntries = loadAllEntries()
 
   const institution = institutions.find((i) => i.id === selected)!
   const country = countries.find((c) => c.id === institution.countryId)!
-  const rows = getPrimaryEventsAtInstitution(institution.id)
+  const rows = getPrimaryEntriesAtInstitution(institution.id, allEntries)
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
@@ -47,36 +49,36 @@ export default function Compare() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-[var(--color-border)] text-xs uppercase tracking-wide text-[var(--color-muted)]">
-                <th className="py-2 pr-4">팀원</th>
-                <th className="py-2 pr-4">관심 분야</th>
-                <th className="py-2 pr-4">변화</th>
-                <th className="py-2">이유</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(({ member, event }) => (
-                <tr key={member.id} className="border-b border-[var(--color-border)] last:border-0">
-                  <td className="py-3 pr-4 font-semibold text-[var(--color-ink)]">
-                    <Link to={`/market/${member.id}`} className="hover:text-[var(--color-brand)]">
-                      {member.name}
-                    </Link>
-                  </td>
-                  <td className="py-3 pr-4 text-[var(--color-muted)]">
-                    {member.stocks.find((s) => s.symbol === event.symbol)?.label}
-                  </td>
-                  <td className="py-3 pr-4">
-                    <Delta value={event.delta} size="sm" />
-                  </td>
-                  <td className="py-3 text-[var(--color-muted)]">{event.why}</td>
+        {rows.length === 0 ? (
+          <p className="text-sm text-[var(--color-muted)]">아직 이곳에서의 기록이 없습니다.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-[var(--color-border)] text-xs uppercase tracking-wide text-[var(--color-muted)]">
+                  <th className="py-2 pr-4">팀원</th>
+                  <th className="py-2 pr-4">변화</th>
+                  <th className="py-2">이유</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {rows.map(({ member, entry }) => (
+                  <tr key={member.id} className="border-b border-[var(--color-border)] last:border-0">
+                    <td className="py-3 pr-4 font-semibold text-[var(--color-ink)]">
+                      <Link to={`/market/${member.id}`} className="hover:text-[var(--color-brand)]">
+                        {member.name}
+                      </Link>
+                    </td>
+                    <td className="py-3 pr-4">
+                      <Delta value={entry.delta} size="sm" />
+                    </td>
+                    <td className="py-3 text-[var(--color-muted)]">{entry.why}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         <p className="mt-6 text-center text-sm italic text-[var(--color-muted)]">
           “같은 장소를 방문했지만, 진로는 서로 다른 방향으로 움직였다.”

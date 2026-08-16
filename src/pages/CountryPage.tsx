@@ -1,7 +1,8 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { countries, countryOrdinal } from '../data/countries'
 import { institutionsByCountry } from '../data/institutions'
-import { getBiggestMoveAtInstitution, stockLabel } from '../data/insights'
+import { getBiggestMoveAtInstitution } from '../data/insights'
+import { loadAllEntries } from '../data/journal-store'
 import { memberById } from '../data/members'
 import Delta from '../components/Delta'
 
@@ -12,6 +13,7 @@ export default function CountryPage() {
 
   const idx = country.order - 1
   const institutions = institutionsByCountry(country.id)
+  const allEntries = loadAllEntries()
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
@@ -31,7 +33,7 @@ export default function CountryPage() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         {institutions.map((inst) => {
-          const biggest = getBiggestMoveAtInstitution(inst.id)
+          const biggest = getBiggestMoveAtInstitution(inst.id, allEntries)
           return (
             <Link
               key={inst.id}
@@ -48,9 +50,9 @@ export default function CountryPage() {
               {biggest && (
                 <div className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-sm">
                   <span className="text-[var(--color-muted)]">
-                    {memberById[biggest.memberId].name} · {stockLabel(biggest.memberId, biggest.symbol)}
+                    {memberById[biggest.memberId].name}
                   </span>
-                  <Delta value={biggest.delta} size="sm" />
+                  <Delta value={biggest.entry.delta} size="sm" />
                 </div>
               )}
             </Link>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { members } from '../data/members'
 import { countries } from '../data/countries'
-import { getMemberTotalChange } from '../data/prices'
+import { loadEntries, computeSeries, START_PRICE } from '../data/journal-store'
 import Delta from '../components/Delta'
 
 export default function Home() {
@@ -62,44 +62,36 @@ export default function Home() {
       </section>
 
       <section className="px-4 py-12 sm:px-6">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-3xl">
           <h2 className="mb-1 text-lg font-bold">MY CAREER MARKET</h2>
           <p className="mb-6 text-sm text-[var(--color-muted)]">
             네 명의 현재 Career Stock — 탭을 눌러 각자의 그래프를 확인하세요.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             {members.map((m) => {
-              const changes = getMemberTotalChange(m.id)
+              const series = computeSeries(loadEntries(m.id))
+              const current = series.length ? series[series.length - 1].price : START_PRICE
+              const change = current - START_PRICE
               return (
                 <Link
                   key={m.id}
                   to={`/market/${m.id}`}
                   className="group rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition-colors hover:border-[var(--color-brand)]"
                 >
-                  <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-base font-bold text-[var(--color-ink)] group-hover:text-[var(--color-brand)]">
                         {m.name}
                       </h3>
                       <p className="text-xs text-[var(--color-muted)]">{m.role}</p>
                     </div>
-                    <span className="rounded-full border border-[var(--color-border)] px-3 py-1 text-xs font-semibold text-[var(--color-muted)] group-hover:border-[var(--color-brand)] group-hover:text-[var(--color-brand)]">
-                      그래프 보기 →
-                    </span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-black tabular text-[var(--color-ink)]">
+                        {current}
+                      </span>
+                      <Delta value={change} size="sm" />
+                    </div>
                   </div>
-                  <ul className="space-y-1.5">
-                    {changes.map((c) => (
-                      <li key={c.symbol} className="flex items-center justify-between text-sm">
-                        <span className="text-[var(--color-muted)]">{c.label}</span>
-                        <span className="flex items-center gap-2 tabular">
-                          <span className="text-[var(--color-ink)]">
-                            {c.start} → {c.current}
-                          </span>
-                          <Delta value={c.change} size="sm" />
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
                 </Link>
               )
             })}

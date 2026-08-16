@@ -5,7 +5,6 @@ export interface Member {
   id: MemberId
   name: string
   role: string
-  stocks: { symbol: string; label: string; description: string }[]
 }
 
 export interface Institution {
@@ -25,12 +24,16 @@ export interface Country {
   order: number
 }
 
-export interface CareerEvent {
-  institutionId: string
+/** One logged reaction to an experience. Delta is always a multiple of 10. */
+export interface JournalEntry {
+  id: string
   memberId: MemberId
-  symbol: string
+  /** Free-text place/industry/job/research environment — not limited to the trip itinerary. */
+  place: string
+  /** Linked institution when the entry matches a known stop on the itinerary. */
+  institutionId?: string
   delta: number
   why: string
-  discovery?: boolean
-  primary?: boolean
+  /** Sort key: seed entries use the itinerary order (0-14), new entries use Date.now(). */
+  at: number
 }
