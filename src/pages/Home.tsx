@@ -30,7 +30,7 @@ export default function Home() {
             </Link>
             <Link
               to="/market"
-              className="rounded-full border border-[var(--color-border)] px-5 py-2.5 text-sm font-bold text-[var(--color-ink)] transition-colors hover:bg-black/5"
+              className="rounded-full border border-[var(--color-border)] px-5 py-2.5 text-sm font-bold text-[var(--color-ink)] transition-colors hover:bg-white/5"
             >
               CAREER MARKET 보기
             </Link>

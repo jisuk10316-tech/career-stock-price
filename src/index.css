@@ -4,19 +4,19 @@
   --font-sans: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
 
-  --color-bg: #f5efe2;
-  --color-surface: #fffdf7;
-  --color-surface-2: #ece2cb;
-  --color-border: #ddd0ac;
-  --color-ink: #362b22;
-  --color-muted: #8a7a63;
-  --color-brand: #b8842a;
-  --color-brand-dim: #8c6520;
-  --color-on-brand: #fffbf2;
-  --color-up: #b2482f;
-  --color-up-dim: #f3ded7;
-  --color-down: #46688a;
-  --color-down-dim: #dce6ee;
+  --color-bg: #0a0d13;
+  --color-surface: #10141d;
+  --color-surface-2: #161b27;
+  --color-border: #232a3a;
+  --color-ink: #eef1f7;
+  --color-muted: #8892a6;
+  --color-brand: #f0b429;
+  --color-brand-dim: #a97e22;
+  --color-on-brand: #10141d;
+  --color-up: #ef4444;
+  --color-up-dim: #7f1d1d;
+  --color-down: #3b82f6;
+  --color-down-dim: #1e3a5f;
 }
 
 html {

@@ -29,7 +29,7 @@ export default function Layout() {
                   `shrink-0 rounded-full px-3 py-1.5 transition-colors ${
                     isActive
                       ? 'bg-[var(--color-brand)] text-[color:var(--color-on-brand)]'
-                      : 'text-[var(--color-muted)] hover:bg-black/5 hover:text-[var(--color-ink)]'
+                      : 'text-[var(--color-muted)] hover:bg-white/5 hover:text-[var(--color-ink)]'
                   }`
                 }
               >

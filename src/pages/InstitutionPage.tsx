@@ -75,7 +75,7 @@ export default function InstitutionPage() {
               </div>
               <button
                 onClick={() => toggle(entry.id)}
-                className="flex w-full items-center justify-between rounded-lg bg-black/5 px-3 py-2 text-left"
+                className="flex w-full items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-left"
               >
                 <Delta value={entry.delta} size="sm" />
                 <span className="text-xs text-[var(--color-muted)]">

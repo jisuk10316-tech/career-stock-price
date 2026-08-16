@@ -47,7 +47,7 @@ export default function CountryPage() {
                 {inst.name}
               </h2>
               {biggest && (
-                <div className="flex items-center justify-between rounded-lg bg-black/5 px-3 py-2 text-sm">
+                <div className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-sm">
                   <span className="text-[var(--color-muted)]">
                     {memberById[biggest.memberId].name}
                   </span>
