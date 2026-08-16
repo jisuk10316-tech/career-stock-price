@@ -18,8 +18,8 @@ export default function Home() {
             <span className="text-[var(--color-brand)]">진로도 움직였다.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-sm text-[var(--color-muted)] sm:text-base">
-            유럽 4개국의 산업·연구·도시 현장을 경험하며 변화한
-            우리의 진로 관심도를 하나의 주가처럼 기록합니다.
+            이동할수록 달라지는 진로의 관심도를
+            하나의 주가처럼 기록합니다.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
             <Link
