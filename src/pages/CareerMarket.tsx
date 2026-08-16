@@ -72,24 +72,48 @@ export default function CareerMarket() {
         <p className="mb-2 font-mono text-xs tracking-widest text-[var(--color-brand)]">
           CAREER MARKET
         </p>
-        <h1 className="mb-6 text-2xl font-black sm:text-3xl">MY CAREER STOCK</h1>
-
-        <div className="mb-8 flex flex-wrap gap-2 border-b border-[var(--color-border)] pb-4">
-          {members.map((m) => (
-            <Link
-              key={m.id}
-              to={`/market/${m.id}`}
-              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-bold text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)]"
-              style={{ borderColor: m.color }}
-            >
-              {m.name}
-            </Link>
-          ))}
-        </div>
-
-        <p className="text-sm text-[var(--color-muted)]">
-          누구의 Career Stock을 볼까요? 위 탭을 눌러 선택하세요.
+        <h1 className="mb-1 text-2xl font-black sm:text-3xl">MY CAREER MARKET</h1>
+        <p className="mb-6 text-sm text-[var(--color-muted)]">
+          네 명의 현재 Career Stock — 탭을 눌러 각자의 그래프를 확인하세요.
         </p>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {members.map((m) => {
+            const memberSeries = computeSeries(loadEntries(m.id))
+            const current = memberSeries.length
+              ? memberSeries[memberSeries.length - 1].price
+              : START_PRICE
+            const change = current - START_PRICE
+            return (
+              <Link
+                key={m.id}
+                to={`/market/${m.id}`}
+                className="group rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition-colors hover:border-[var(--color-brand)]"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: m.color }}
+                    />
+                    <div>
+                      <h3 className="text-base font-bold text-[var(--color-ink)] group-hover:text-[var(--color-brand)]">
+                        {m.name}
+                      </h3>
+                      <p className="text-xs text-[var(--color-muted)]">{m.role}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-black tabular" style={{ color: m.color }}>
+                      {current}
+                    </span>
+                    <Delta value={change} size="sm" />
+                  </div>
+                </div>
+              </Link>
+            )
+          })}
+        </div>
       </div>
     )
   }
