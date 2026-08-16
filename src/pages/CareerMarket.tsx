@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { members } from '../data/members'
-import { institutions } from '../data/institutions'
+import { institutions, institutionsByCountry } from '../data/institutions'
+import { countries } from '../data/countries'
 import {
   addEntry,
   clampDelta,
@@ -28,9 +29,13 @@ export default function CareerMarket() {
     setEntries(loadEntries(active.id))
   }, [active.id])
 
-  const [place, setPlace] = useState('')
+  const [placeOption, setPlaceOption] = useState('') // '' | 'custom' | institution id
+  const [customPlace, setCustomPlace] = useState('')
   const [delta, setDelta] = useState(0)
   const [why, setWhy] = useState('')
+
+  const selectedInstitution = institutions.find((i) => i.id === placeOption)
+  const place = placeOption === 'custom' ? customPlace : (selectedInstitution?.name ?? '')
 
   const series = useMemo(() => computeSeries(entries), [entries])
   const currentPrice = series.length ? series[series.length - 1].price : START_PRICE
@@ -39,15 +44,15 @@ export default function CareerMarket() {
   const handleSubmit = (ev: React.FormEvent) => {
     ev.preventDefault()
     if (!place.trim() || !why.trim()) return
-    const matchedInstitution = institutions.find((i) => i.name === place || i.nameKo === place)
     const next = addEntry(active.id, {
       place: place.trim(),
       delta,
       why: why.trim(),
-      institutionId: matchedInstitution?.id,
+      institutionId: selectedInstitution?.id,
     })
     setEntries(next)
-    setPlace('')
+    setPlaceOption('')
+    setCustomPlace('')
     setDelta(0)
     setWhy('')
   }
@@ -114,19 +119,40 @@ export default function CareerMarket() {
             <label htmlFor="place" className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[var(--color-muted)]">
               오늘 경험한 곳
             </label>
-            <input
-              id="place"
-              list="institution-options"
-              value={place}
-              onChange={(e) => setPlace(e.target.value)}
-              placeholder="예: DHL Europe Innovation Center"
-              className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-brand)] focus:outline-none"
-            />
-            <datalist id="institution-options">
-              {institutions.map((i) => (
-                <option key={i.id} value={i.name} />
-              ))}
-            </datalist>
+            <div className="relative">
+              <select
+                id="place"
+                value={placeOption}
+                onChange={(e) => setPlaceOption(e.target.value)}
+                className="w-full appearance-none rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 pr-9 text-sm text-[var(--color-ink)] focus:border-[var(--color-brand)] focus:outline-none"
+              >
+                <option value="" disabled>
+                  장소를 선택하세요
+                </option>
+                {countries.map((c) => (
+                  <optgroup key={c.id} label={`${c.flag} ${c.nameKo}`}>
+                    {institutionsByCountry(c.id).map((i) => (
+                      <option key={i.id} value={i.id}>
+                        {i.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+                <option value="custom">✏️ 직접 입력</option>
+              </select>
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]">
+                ▾
+              </span>
+            </div>
+            {placeOption === 'custom' && (
+              <input
+                autoFocus
+                value={customPlace}
+                onChange={(e) => setCustomPlace(e.target.value)}
+                placeholder="예: Google Amsterdam Office"
+                className="mt-2 w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-[var(--color-muted)] focus:border-[var(--color-brand)] focus:outline-none"
+              />
+            )}
           </div>
 
           <div>
