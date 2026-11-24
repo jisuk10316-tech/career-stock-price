@@ -45,6 +45,28 @@ function EndDot(props: any) {
   return <circle cx={cx} cy={cy} r={5} fill={accent} stroke="var(--color-surface)" strokeWidth={2} />
 }
 
+/** Long place names would otherwise overflow the chart edges — clip with an ellipsis. */
+function truncateLabel(text: string, max = 6) {
+  return text.length > max ? `${text.slice(0, max)}…` : text
+}
+
+function XAxisTick({ x, y, payload, index, visibleTicksCount }: any) {
+  const isFirst = index === 0
+  const isLast = index === visibleTicksCount - 1
+  const anchor = isFirst ? 'start' : isLast ? 'end' : 'middle'
+  return (
+    <text
+      x={x}
+      y={y + 12}
+      textAnchor={anchor}
+      fontSize={11}
+      fill="var(--color-muted)"
+    >
+      {truncateLabel(payload.value)}
+    </text>
+  )
+}
+
 export default function JournalChart({ series, height = 320, color }: JournalChartProps) {
   const accent = color ?? 'var(--color-brand)'
   const gradientId = `journalFill-${accent.replace(/[^a-zA-Z0-9]/g, '')}`
@@ -55,7 +77,7 @@ export default function JournalChart({ series, height = 320, color }: JournalCha
 
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <AreaChart data={data} margin={{ top: 8, right: 16, left: -12, bottom: 8 }}>
+      <AreaChart data={data} margin={{ top: 8, right: 4, left: 4, bottom: 8 }}>
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={accent} stopOpacity={0.35} />
@@ -66,7 +88,7 @@ export default function JournalChart({ series, height = 320, color }: JournalCha
         <XAxis
           dataKey="place"
           stroke="var(--color-muted)"
-          tick={{ fontSize: 11, fill: 'var(--color-muted)' }}
+          tick={<XAxisTick />}
           interval="preserveStartEnd"
           tickLine={false}
         />
@@ -75,6 +97,7 @@ export default function JournalChart({ series, height = 320, color }: JournalCha
           tick={{ fontSize: 11, fill: 'var(--color-muted)' }}
           tickLine={false}
           axisLine={false}
+          width={34}
           domain={['dataMin - 10', 'dataMax + 10']}
         />
         <ReferenceLine y={START_PRICE} stroke="var(--color-muted)" strokeDasharray="4 4" />

@@ -98,10 +98,10 @@ export default function CareerMarket() {
                 to={`/market/${m.id}`}
                 className="group rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition-colors hover:border-[var(--color-brand)]"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span
-                      className="h-2.5 w-2.5 rounded-full"
+                      className="h-2.5 w-2.5 shrink-0 rounded-full"
                       style={{ backgroundColor: m.color }}
                     />
                     <div>
@@ -141,13 +141,13 @@ export default function CareerMarket() {
                   className="block rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-brand)]"
                 >
                   <div className="mb-1 flex items-center justify-between gap-3">
-                    <span className="flex items-center gap-2 text-sm font-semibold text-[var(--color-ink)]">
+                    <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-[var(--color-ink)]">
                       <span
-                        className="h-2 w-2 rounded-full"
+                        className="h-2 w-2 shrink-0 rounded-full"
                         style={{ backgroundColor: member.color }}
                       />
-                      {member.name}
-                      <span className="font-normal text-[var(--color-muted)]">
+                      <span className="shrink-0">{member.name}</span>
+                      <span className="truncate font-normal text-[var(--color-muted)]">
                         · {entry.place}
                       </span>
                     </span>

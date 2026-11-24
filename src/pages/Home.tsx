@@ -15,7 +15,7 @@ export default function Home() {
           <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-5xl">
             우리가 이동한 만큼,
             <br />
-            <span className="text-[var(--color-brand)]">진로도 움직였다.</span>
+            <span className="text-[var(--color-brand)]">진로도 움직인다</span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-sm text-[var(--color-muted)] sm:text-base">
             이동할수록 달라지는 진로의 관심도를
@@ -78,10 +78,10 @@ export default function Home() {
                   to={`/market/${m.id}`}
                   className="group rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition-colors hover:border-[var(--color-brand)]"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <span
-                        className="h-2.5 w-2.5 rounded-full"
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
                         style={{ backgroundColor: m.color }}
                       />
                       <div>
